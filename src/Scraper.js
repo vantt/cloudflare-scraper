@@ -159,7 +159,7 @@ export class Scraper {
     return html;
   }
 
-  async getText(selector, { spaced = false } = {}) {
+  async getText(selector, { preserveWhitespace = false } = {}) {
     const matches = {};
     const selectors = selector.split(',').map(s => s.trim());
 
@@ -175,7 +175,7 @@ export class Scraper {
         text(text) {
           nextText += text.text;
           if (text.lastInTextNode) {
-            if (spaced) nextText += "\n";
+            if (preserveWhitespace) nextText += "\n";
             matches[sel].push(nextText);
             nextText = '';
           }
@@ -192,8 +192,8 @@ export class Scraper {
 
       matches[sel].forEach(text => {
         if (text === true) {
-          if (nextText.trim() !== '') {
-            nodeCompleteTexts.push(this.cleanText(nextText));
+          if (nextText !== '') {
+            nodeCompleteTexts.push(preserveWhitespace ? nextText : this.cleanText(nextText));
             nextText = '';
           }
         } else {
@@ -201,7 +201,7 @@ export class Scraper {
         }
       });
 
-      const lastText = this.cleanText(nextText);
+      const lastText = preserveWhitespace ? nextText : this.cleanText(nextText);
       if (lastText !== '') nodeCompleteTexts.push(lastText);
       matches[sel] = nodeCompleteTexts;
     });
@@ -226,5 +226,33 @@ export class Scraper {
 
   cleanText(text) {
     return text.trim().replace(/\s+/g, ' ');
+  }
+
+  /**
+   * Sets the HTML content of the response.
+   * 
+   * This method allows you to set the HTML content of the response, which can be
+   * useful for testing or simulating responses in a controlled environment.
+   * 
+   * @param {string} html - The HTML content to set as the response.
+   * @returns {Promise<void>} A promise that resolves when the response is set.
+   */
+  async setHTML(html) {
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    
+    this.response = await fetch(url, {
+      headers: { 'Content-Type': 'text/html' }
+    });
+
+    // Add properties to make it more like a real HTTP response
+    Object.defineProperties(this.response, {
+      url: { value: 'http://example.com', writable: false },
+      status: { value: 200, writable: false },
+      statusText: { value: 'OK', writable: false },
+      ok: { value: true, writable: false },
+    });
+
+    URL.revokeObjectURL(url);
   }
 }

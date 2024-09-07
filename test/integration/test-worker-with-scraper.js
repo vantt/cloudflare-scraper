@@ -58,7 +58,7 @@ export default {
       } 
       else if (pathname === '/multiple') {
         const chainedScraper = scraper.chain();
-        
+
         for (const op of operations) {
           const { selector, extractor, attribute, options = {} } = op;
           switch (extractor) {
