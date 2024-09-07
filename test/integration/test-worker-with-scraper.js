@@ -61,6 +61,7 @@ export default {
 
         for (const op of operations) {
           const { selector, extractor, attribute, options = {} } = op;
+          
           switch (extractor) {
             case 'html':
               chainedScraper.html(selector);
@@ -83,7 +84,8 @@ export default {
       return new Response(JSON.stringify(result), {
         headers: { 'Content-Type': 'application/json' },
       });
-    } catch (error) {
+    } 
+    catch (error) {
       return new Response(`Error: ${error.message}`, { status: 500 });
     }
   }

@@ -80,11 +80,11 @@ export class Scraper {
   async executeOperation(operation) {
     switch (operation.extractor) {
       case 'html':
-        return this.extractHtml(operation.selector);
+        return  this.extractHtml(operation.selector);
       case 'text':
-        return this.getText(operation.selector, operation.options);
+        return  this.getText(operation.selector, operation.options);
       case 'attribute':
-        return this.getAttribute(operation.selector, operation.attributeName);
+        return  this.getAttribute(operation.selector, operation.attributeName);
       default:
         throw new Error(`Unknown operation extractor: ${operation.extractor}`);
     }

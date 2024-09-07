@@ -116,15 +116,15 @@ describe('Cloudflare Scraper Integration Test', () => {
           body: JSON.stringify({
             url: 'https://example.com',
             operations: [
-              { selector: 'h1', type: 'html' },
-              { selector: 'p', type: 'text' },
-              { selector: 'a', type: 'attribute', attribute: 'href' }
+              { selector: 'h1', extractor: 'html' },
+              { selector: 'p', extractor: 'text' },
+              { selector: 'a', extractor: 'attribute', attribute: 'href' }
             ]
           })
         });
         const result = await res.json();
         console.log(result);
-        
+
         expect(result).toHaveLength(3);
         expect(result[0]).toContain('<h1>Example Domain</h1>');
         expect(result[1]).toContain('This domain is for use in illustrative examples in documents.');
