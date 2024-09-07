@@ -210,11 +210,11 @@ export class Scraper {
   }
 
   async getAttribute(selector, attribute) {
-    let attributeValue = null;
+    let attributeValue = '';
     await new HTMLRewriter()
       .on(selector, {
         element(element) {
-          if (attributeValue === null) {
+          if (attributeValue === '') {
             attributeValue = element.getAttribute(attribute) || '';
           }
         }
@@ -230,29 +230,22 @@ export class Scraper {
 
   /**
    * Sets the HTML content of the response.
+   * This method is supported only in the test environment.
    * 
    * This method allows you to set the HTML content of the response, which can be
-   * useful for testing or simulating responses in a controlled environment.
+   * useful for simulating responses in a controlled environment.
+   * 
+   * You can generate and set the HTML content with enough CSS selectors to test most of the functionality.
    * 
    * @param {string} html - The HTML content to set as the response.
    * @returns {Promise<void>} A promise that resolves when the response is set.
    */
   async setHTML(html) {
-    const blob = new Blob([html], { type: 'text/html' });
-    const url = URL.createObjectURL(blob);
-    
-    this.response = await fetch(url, {
-      headers: { 'Content-Type': 'text/html' }
+    this.response = new Response(html, {
+      headers: { 'Content-Type': 'text/html' },
+      status: 200,
+      statusText: 'OK'
     });
-
-    // Add properties to make it more like a real HTTP response
-    Object.defineProperties(this.response, {
-      url: { value: 'http://example.com', writable: false },
-      status: { value: 200, writable: false },
-      statusText: { value: 'OK', writable: false },
-      ok: { value: true, writable: false },
-    });
-
-    URL.revokeObjectURL(url);
+    return this;
   }
 }

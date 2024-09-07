@@ -30,63 +30,71 @@ import Scraper from '../../src/index.js';
  */
 
 export default {
-  async fetch(request, env, ctx) {
-    const { pathname } = new URL(request.url);
-    const { url, operations } = await request.json();
+    async fetch(request, env, ctx) {
+        const { pathname } = new URL(request.url);
+        const { url, html, operations } = await request.json();
 
-    const scraper = new Scraper();
-    await scraper.fetch(url);
+        const scraper = new Scraper();
+//        await scraper.fetch(url);
 
-    let result;
-
-    try {
-      if (pathname === '/single') {
-        const { selector, extractor, attribute, options = {} } = operations;
-        switch (extractor) {
-          case 'html':
-            result = await scraper.html(selector);
-            break;
-          case 'text':
-            result = await scraper.text(selector, options);
-            break;
-          case 'attribute':
-            result = await scraper.attribute(selector, attribute);
-            break;
-          default:
-            throw new Error('Invalid operation extractor');
+        if (html) {
+            // If HTML is provided, use it directly
+            await scraper.setHTML(html);
+        } else {
+            // Otherwise, fetch from URL
+            await scraper.fetch(url);
         }
-      } 
-      else if (pathname === '/multiple') {
-        const chainedScraper = scraper.chain();
 
-        for (const op of operations) {
-          const { selector, extractor, attribute, options = {} } = op;
-          
-          switch (extractor) {
-            case 'html':
-              chainedScraper.html(selector);
-              break;
-            case 'text':
-              chainedScraper.text(selector, options);
-              break;
-            case 'attribute':
-              chainedScraper.attribute(selector, attribute);
-              break;
-          }
+        let result;
+
+        try {
+            if (pathname === '/single') {
+                const { selector, extractor, attribute, options = {} } = operations;
+                switch (extractor) {
+                    case 'html':
+                        result = await scraper.html(selector);
+                        break;
+                    case 'text':
+                        result = await scraper.text(selector, options);
+                        break;
+                    case 'attribute':
+                        result = await scraper.attribute(selector, attribute);
+                        break;
+                    default:
+                        throw new Error('Invalid operation extractor');
+                }
+            }
+            else if (pathname === '/multiple') {
+                const chainedScraper = scraper.chain();
+
+                for (const op of operations) {
+                    const { selector, extractor, attribute, options = {} } = op;
+
+                    switch (extractor) {
+                        case 'html':
+                            chainedScraper.html(selector);
+                            break;
+                        case 'text':
+                            chainedScraper.text(selector, options);
+                            break;
+                        case 'attribute':
+                            chainedScraper.attribute(selector, attribute);
+                            break;
+                    }
+                }
+
+                result = await chainedScraper.getResult();
+            }
+            else {
+                throw new Error('Invalid endpoint');
+            }
+
+            return new Response(JSON.stringify(result), {
+                headers: { 'Content-Type': 'application/json' },
+            });
         }
-      
-        result = await chainedScraper.getResult();
-      } 
-      else {
-        throw new Error('Invalid endpoint');
-      }
-
-      return new Response(JSON.stringify(result), {
-        headers: { 'Content-Type': 'application/json' },
-      });
-    } 
-    catch (error) {
-      return new Response(`Error: ${error.message}`, { status: 500 });
+        catch (error) {
+            return new Response(`Error: ${error.message}`, { status: 500 });
+        }
     }
-  }
 };
