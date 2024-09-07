@@ -14,7 +14,7 @@ describe('Cloudflare Scraper Integration Test', () => {
   beforeAll(async () => {
     try {
       mf = new Miniflare({
-        scriptPath: path.join(__dirname, 'test-worker-with-scraper.js'),
+        scriptPath: path.join(__dirname, 'test-worker-with-scraper-built.js'),
         modules: true,
         modulesRules: [{ type: "ESModule", include: ["**/*.js"] }],
         rootPath: path.resolve(__dirname, '../..'),
