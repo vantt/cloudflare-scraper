@@ -1,0 +1,45 @@
+{
+  "name": "cloudflare-scraper",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A scraper class for Cloudflare Workers",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "exports": {
+    "import": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c --watch",
+    "minify": "rollup -c --minify",
+    "prepublishOnly": "npm run build",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js  --detectOpenHandles",
+    "pretest": "npm run build"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "scraper"
+  ],
+  "author": "Tran Toan Van",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-runtime": "^7.22.5",
+    "@babel/preset-env": "^7.25.4",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "babel-jest": "^29.7.0",
+    "jest": "^29.7.0",
+    "miniflare": "^3.20240821.1",
+    "rollup": "^4.21.2"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.22.5"
+  }
+}
