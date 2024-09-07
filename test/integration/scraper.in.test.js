@@ -139,7 +139,7 @@ describe('Cloudflare Scraper Integration Test', () => {
         method: 'POST',
         body: JSON.stringify({
           url: 'https://example.com',
-          operations: { selector: '#non-existent', type: 'text' }
+          operations: { selector: '#non-existent', extractor: 'text' }
         })
       });
       const result = await res.json();
@@ -151,7 +151,7 @@ describe('Cloudflare Scraper Integration Test', () => {
         method: 'POST',
         body: JSON.stringify({
           url: 'https://non-existent-url.com',
-          operations: { selector: 'h1', type: 'text' }
+          operations: { selector: 'h1', extractor: 'text' }
         })
       });
       expect(res.status).toBe(500);
