@@ -49,6 +49,9 @@ export default {
         try {
             if (pathname === '/single') {
                 const { selector, extractor, attribute, options = {} } = operations;
+                
+                //console.log('Single operation:', { selector, extractor, attribute, options });
+
                 switch (extractor) {
                     case 'html':
                         result = await scraper.html(selector);
@@ -64,6 +67,8 @@ export default {
                 }
             }
             else if (pathname === '/multiple') {
+                //console.log('Multiple operations:', operations);
+                
                 const chainedScraper = scraper.chain();
 
                 for (const op of operations) {
@@ -87,6 +92,8 @@ export default {
             else {
                 throw new Error('Invalid endpoint');
             }
+
+            //console.log('Operation result:', result);
 
             return new Response(JSON.stringify(result), {
                 headers: { 'Content-Type': 'application/json' },

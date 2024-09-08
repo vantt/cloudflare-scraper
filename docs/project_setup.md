@@ -156,7 +156,7 @@ export class Scraper {
 
 3. Publish to npm:
    ```
-   npm publish
+   npm publish --access=public
    ```
 
 ## 6. Usage Instructions

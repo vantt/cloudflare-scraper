@@ -88,35 +88,3 @@ try {
   console.error('Scraping failed:', error.message);
 }
 ```
-
-## Explanation of Key Features
-
-1. **HTMLRewriter Usage**: The Scraper class utilizes Cloudflare's HTMLRewriter for efficient HTML parsing. This allows for streaming parsing of HTML, which is crucial for performance in a Worker environment.
-
-2. **Flexible API**: The class supports both immediate execution of single operations and chained execution of multiple operations. This flexibility allows for various scraping patterns.
-
-3. **Error Handling**: The class includes robust error handling, especially for Cloudflare-specific scenarios. It distinguishes between errors in the Worker itself and errors from the scraped site.
-
-4. **Text Extraction**: The `getText` method includes advanced features like handling multiple selectors and optional spacing between text nodes.
-
-5. **Attribute Extraction**: The `getAttribute` method efficiently extracts the first matching attribute value.
-
-6. **Chainable Operations**: The `chain` method allows for defining multiple operations that are executed together, which can be more efficient for complex scraping tasks.
-
-7. **Stateless Design**: The class is designed to be stateless between operations, which aligns well with the Cloudflare Worker environment.
-
-## Best Practices
-
-1. Use chained operations when scraping multiple elements from the same page to reduce the number of HTTP requests.
-2. Be mindful of the Worker CPU time limits (50ms on the free plan) when scraping large or complex pages.
-3. Implement caching mechanisms in your Worker script to store frequently scraped data and reduce load on target websites.
-4. Respect robots.txt files and implement rate limiting to be a good web citizen.
-5. Use error handling to gracefully manage cases where the scraped website's structure changes.
-
-## Limitations
-
-1. The Scraper class is designed for use in a Cloudflare Worker environment and may not work in other contexts without modification.
-2. Complex JavaScript-rendered content may not be scrapable with this class, as it operates on the initial HTML response.
-3. Large pages may approach CPU time limits in the Worker environment. Consider implementing pagination or incremental scraping for such cases.
-
-By following this guide, you should be able to effectively use the Scraper class for various web scraping tasks in your Cloudflare Worker projects.

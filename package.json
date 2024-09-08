@@ -1,5 +1,5 @@
 {
-  "name": "cloudflare-scraper",
+  "name": "@trantoanvan/cloudflare-scraper",
   "version": "1.0.0",
   "type": "module",
   "description": "A scraper class for Cloudflare Workers",

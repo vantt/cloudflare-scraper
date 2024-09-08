@@ -158,6 +158,69 @@ export class Scraper {
   
     return html;
   }
+  
+  async extractHtml2(selector) {
+    let results = [];
+    let currentElement = null;
+    let currentHtml = '';
+    let depth = 0;
+  
+    await new HTMLRewriter()
+      .on(selector, {
+        element(element) {
+          if (currentElement === null) {
+            currentElement = element;
+            currentHtml = '';
+            depth = 0;
+          }
+        },
+        text(text) {
+          if (currentElement !== null) {
+            currentHtml += text.text;
+          }
+        }
+      })
+      .on('*', {
+        element(element) {
+          if (currentElement !== null) {
+            if (depth > 0 || !element.removed) {
+              currentHtml += `<${element.tagName}`;
+              for (const [name, value] of element.attributes) {
+                currentHtml += ` ${name}="${value}"`;
+              }
+              currentHtml += '>';
+            }
+            depth++;
+          }
+        },
+        text(text) {
+          if (currentElement !== null && depth > 0) {
+            currentHtml += text.text;
+          }
+        },
+        comments(comment) {
+          if (currentElement !== null && depth > 0) {
+            currentHtml += `<!--${comment.text}-->`;
+          }
+        },
+        endTag(end) {
+          if (currentElement !== null) {
+            depth--;
+            if (depth > 0 || !end.removed) {
+              currentHtml += `</${end.tagName}>`;
+            }
+            if (depth === 0) {
+              results.push(currentHtml);
+              currentElement = null;
+            }
+          }
+        }
+      })
+      .transform(this.response.clone())
+      .arrayBuffer();
+  
+    return results.join('');
+  }
 
   async getText(selector, { preserveWhitespace = false } = {}) {
     const matches = {};
